@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Sample API
+  description: A sample API to illustrate OpenAPI concepts
+tags:
+- name: Message
+paths:
+  /message:
+    get:
+      description: requests the message
+      tags:
+        - Message
+      responses:
+        '200':
+          description: Successfully got the message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+components:
+  schemas:
+    Message:
+      type: object
+      description: A message object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          example: 'Greetings'

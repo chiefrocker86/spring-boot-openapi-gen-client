@@ -1,0 +1,23 @@
+package org.fkeller.spring.boot.openapi.gen.rest;
+
+import jakarta.annotation.Generated;
+import org.fkeller.spring.boot.openapi.gen.rest.model.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.10.0")
+@Component
+public class MessageApiController implements MessageApi {
+
+    private final MessageApiDelegate delegate;
+
+    public MessageApiController(@Autowired MessageApiDelegate delegate) {
+        this.delegate = delegate;
+    }
+
+    @Override
+    public ResponseEntity<Message> messageGet() {
+        return delegate.messageGet();
+    }
+}
