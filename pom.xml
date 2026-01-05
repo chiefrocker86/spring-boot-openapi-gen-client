@@ -30,6 +30,8 @@
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <src-gen.openapi.folder>src-gen/openapi</src-gen.openapi.folder>
+        <jar.name>app</jar.name>
+        <surefire-plugin.version>3.5.4</surefire-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -109,6 +111,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>${jar.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -287,5 +290,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
 </project>
