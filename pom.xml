@@ -26,7 +26,7 @@
         <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
         <springdoc-openapi-ui.version>1.8.0</springdoc-openapi-ui.version>
         <!--client libs versions-->
-        <spring-cloud.version>2025.1.0</spring-cloud.version>
+        <spring-cloud.version>2025.0.1</spring-cloud.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <src-gen.openapi.folder>src-gen/openapi</src-gen.openapi.folder>
