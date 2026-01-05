@@ -1,37 +1,28 @@
-FROM ghcr.io/graalvm/native-image-community:25-muslib AS builder
+FROM registry.connect.redhat.com/ibm/ibm-semeru-runtime-certified-25-jdk-ubi10-minimal AS builder
 
-ARG UPX_VERSION=5.0.2
 ARG MVN_VERSION=3.9.12
 
+USER 0
 # Install upx
 WORKDIR /tools
 RUN microdnf install -y xz \
-    # Install upx
-    && curl -sLJO https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-amd64_linux.tar.xz \
-    && tar -xf upx-${UPX_VERSION}-amd64_linux.tar.xz \
-    && rm -rf upx-${UPX_VERSION}-amd64_linux.tar.xz \
     && curl -sLJO https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz \
     && tar -xf apache-maven-${MVN_VERSION}-bin.tar.gz \
     && rm -rf apache-maven-${MVN_VERSION}-bin.tar.gz
 # settings paths
-ENV UPX_DIR=/tools/upx-${UPX_VERSION}-amd64_linux
 ENV MVN_HOME=/tools/apache-maven-${MVN_VERSION}/bin
-ENV PATH="$MVN_HOME:$UPX_DIR:$PATH"
+ENV PATH="$MVN_HOME:$PATH"
 
-# Build native executable "app"
+USER 1001
 WORKDIR /tmp
-COPY . .
+COPY --chown=1001:1001 . .
 # remove target folder
 RUN rm -rf target
 # Compile native executable
-RUN mvn clean verify -Pnative
+RUN mvn clean verify
 
-# Compress native executable "app"
-RUN upx --lzma --best target/app
-
-# Create run image from scratch
-FROM scratch
-COPY --from=builder /tmp/target/app .
+FROM registry.connect.redhat.com/ibm/ibm-semeru-runtime-certified-25-jre-ubi10-minimal
+COPY --from=builder --chown=1001:1001 /tmp/target/app.jar .
 # necessary for the webserver
 WORKDIR /tmp
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["java","-jar","/app.jar"]
