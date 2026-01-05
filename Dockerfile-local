@@ -1,0 +1,28 @@
+FROM registry.connect.redhat.com/ibm/ibm-semeru-runtime-certified-25-jdk-ubi10-minimal AS builder
+
+ARG MVN_VERSION=3.9.12
+
+USER 0
+# Install upx
+WORKDIR /tools
+RUN microdnf install -y xz \
+    && curl -sLJO https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz \
+    && tar -xf apache-maven-${MVN_VERSION}-bin.tar.gz \
+    && rm -rf apache-maven-${MVN_VERSION}-bin.tar.gz
+# settings paths
+ENV MVN_HOME=/tools/apache-maven-${MVN_VERSION}/bin
+ENV PATH="$MVN_HOME:$PATH"
+
+USER 1001
+WORKDIR /tmp
+COPY --chown=1001:1001 . .
+# remove target folder
+RUN rm -rf target
+# Compile native executable
+RUN mvn clean verify
+
+FROM registry.connect.redhat.com/ibm/ibm-semeru-runtime-certified-25-jre-ubi10-minimal
+COPY --from=builder --chown=1001:1001 /tmp/target/app.jar .
+# necessary for the webserver
+WORKDIR /tmp
+ENTRYPOINT ["java","-jar","/app.jar"]
