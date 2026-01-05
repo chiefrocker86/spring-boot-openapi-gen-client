@@ -20,7 +20,7 @@ ENV PATH="$MVN_HOME:$UPX_DIR:$PATH"
 
 # Build native executable "app"
 WORKDIR /tmp
-COPY . .
+COPY --chown=1001:1001 . .
 # remove target folder
 RUN rm -rf target
 # Compile native executable
@@ -31,7 +31,7 @@ RUN upx --lzma --best target/app
 
 # Create run image from scratch
 FROM scratch
-COPY --from=builder /tmp/target/app .
+COPY --from=builder --chown=1001:1001 /tmp/target/app .
 # necessary for the webserver
 WORKDIR /tmp
 ENTRYPOINT ["/app"]
