@@ -30,6 +30,8 @@
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
         <src-gen.openapi.folder>src-gen/openapi</src-gen.openapi.folder>
+        <native.imageName>app</native.imageName>
+        <surefire-plugin.version>3.5.4</surefire-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -287,5 +289,46 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <imageName>${native.imageName}</imageName>
+                            <buildArgs>--static --libc=musl</buildArgs>
+                            <agent>
+                                <enabled>true</enabled>
+                            </agent>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire-plugin.version}</version>
+                        <!-- Add the rest of your options -->
+                        <configuration>
+                            <!-- Add the rest of your configuration -->
+                            <argLine>-agentlib:native-image-agent=config-output-dir=META-INF/native-image</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>

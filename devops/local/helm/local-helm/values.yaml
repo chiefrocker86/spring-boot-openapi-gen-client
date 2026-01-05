@@ -1,0 +1,5 @@
+name: spring-boot-openapi-gen-client
+image: spring-boot-openapi-gen-client
+port: 8081
+env:
+  SERVER_PORT: 8081
